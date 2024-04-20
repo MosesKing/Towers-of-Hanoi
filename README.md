@@ -19,3 +19,26 @@ minikube start --driver=docker
 ``` bash
 kubectl get nodes
 ```
+
+## Step 2: Install and Set Up Crossplane
+
+### Install Crossplane
+
+To install Crossplane using a Helm chart, run the following commands:
+
+```bash
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
+```
+
+Install Crossplane into Your Cluster
+After adding the Helm repository, you can install Crossplane into your Kubernetes cluster:
+``` bash
+helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
+```
+
+Verify Installation
+To ensure Crossplane has been installed successfully, check the Crossplane components in the crossplane-system namespace:
+``` bash
+kubectl get all -n crossplane-system
+```
