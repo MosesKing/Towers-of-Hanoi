@@ -1,7 +1,5 @@
 # Towers-of-Hanoi
 
-# Setup Guide for Kubernetes Cluster with Minikube
-
 ## Step 1: Setting Up a Kubernetes Cluster
 
 Before you begin, ensure you have a Kubernetes cluster. You can set this up on a cloud provider like AWS, GCP, or Azure, or locally using Minikube or kind. The instructions below describe setting up a local cluster using Minikube for development purposes.
