@@ -18,9 +18,9 @@ type TowerChallengeReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=hanoi.hanoi.com,resources=towerchallenges,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=hanoi.hanoi.com,resources=towerchallenges/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=hanoi.hanoi.com,resources=towerchallenges/finalizers,verbs=update
+//+kubebuilder:rbac:groups=hanoi.com,resources=towerchallenges,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=hanoi.com,resources=towerchallenges/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=hanoi.com,resources=towerchallenges/finalizers,verbs=update
 
 // Reconcile handles the actual reconciliation logic of the TowerChallenge controller.
 func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -44,7 +44,6 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	// Log a message indicating that the TowerChallenge resource is being handled.
-	// This is useful for tracking which resources are currently processed.
 	log.Info("Handling TowerChallenge resource")
 
 	// Here you might want to add additional logic to handle the TowerChallenge resource properly.
