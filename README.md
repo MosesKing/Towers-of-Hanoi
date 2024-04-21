@@ -139,3 +139,9 @@ This will update your project with the latest CRD manifests and RBAC configurati
 ```bash
 make manifests
 ```
+
+### Implement Initial Controller Logic: 
+
+- Go into controllers/towerchallenge_controller.go
+- Implement the logic to handle the creation, update, and deletion of TowerChallenge resources. 
+- Intially we want to just  log the events to understand the lifecycle of the resources. We will later implement the logic for the Towers of Hanoi Problem and manage the Kubernetes ConfigMaps as specified in our CRD. 
