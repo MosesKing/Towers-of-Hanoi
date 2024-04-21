@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -46,7 +47,15 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// Log a message indicating that the TowerChallenge resource is being handled.
 	log.Info("Handling TowerChallenge resource")
 
-	// Here you might want to add additional logic to handle the TowerChallenge resource properly.
+	// Implement Tower of Hanoi algorithm here
+	moves := TowerOfHanoi(towerChallenge.Spec.NumDisks, "Source", "Auxiliary", "Destination")
+
+	// Update ConfigMaps based on game state
+	// For now, let's just log the moves
+	for _, move := range moves {
+		log.Info(move)
+	}
+
 	return ctrl.Result{}, nil
 }
 
@@ -55,4 +64,17 @@ func (r *TowerChallengeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&hanoiv1alpha1.TowerChallenge{}).
 		Complete(r)
+}
+
+// TowerOfHanoi implements the Tower of Hanoi algorithm recursively
+func TowerOfHanoi(numDisks int, source, auxiliary, destination string) []string {
+	var moves []string
+	if numDisks == 1 {
+		moves = append(moves, fmt.Sprintf("Move disk 1 from %s to %s", source, destination))
+		return moves
+	}
+	moves = append(moves, TowerOfHanoi(numDisks-1, source, destination, auxiliary)...)
+	moves = append(moves, fmt.Sprintf("Move disk %d from %s to %s", numDisks, source, destination))
+	moves = append(moves, TowerOfHanoi(numDisks-1, auxiliary, source, destination)...)
+	return moves
 }

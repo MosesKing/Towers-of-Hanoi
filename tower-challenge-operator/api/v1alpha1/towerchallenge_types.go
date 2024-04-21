@@ -20,22 +20,25 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // TowerChallengeSpec defines the desired state of TowerChallenge
 type TowerChallengeSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of TowerChallenge. Edit towerchallenge_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	NumDisks       int      `json:"numDisks,omitempty"`
+	SourceTower    []int    `json:"sourceTower,omitempty"`
+	AuxiliaryTower []int    `json:"auxiliaryTower,omitempty"`
+	TargetTower    []int    `json:"targetTower,omitempty"`
+	CurrentMove    MoveType `json:"currentMove,omitempty"`
 }
 
 // TowerChallengeStatus defines the observed state of TowerChallenge
 type TowerChallengeStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+}
+
+// Define a custom type for the move
+type MoveType struct {
+	FromTower int `json:"fromTower,omitempty"`
+	ToTower   int `json:"toTower,omitempty"`
 }
 
 //+kubebuilder:object:root=true
