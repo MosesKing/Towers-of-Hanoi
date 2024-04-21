@@ -86,3 +86,19 @@ NAME                                      READY   STATUS    RESTARTS   AGE
 crossplane-6d84f5ccdf-pm9sk               1/1     Running   0          22s
 crossplane-rbac-manager-fd57f7d55-ftbzc   1/1     Running   0          22s
 ```
+
+
+## Apply our Custom Resource Definition (CRD): 
+
+- Created CRDs are found in this repository under CRDs: 
+
+Apply the CRD to our kubernetes cluster using the following command: 
+
+```bash
+kubectl apply -f towerchallenge.yaml
+```
+
+### Output should be similar: 
+```bash 
+customresourcedefinition.apiextensions.k8s.io/towerchallenges.hanoi.com created
+```
