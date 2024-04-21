@@ -11,17 +11,21 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	hanoiv1alpha1 "github.com/MosesKing/Towers-of-Hanoi/api/v1alpha1"
+	"github.com/go-logr/logr"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // TowerChallengeReconciler reconciles a TowerChallenge object
 type TowerChallengeReconciler struct {
 	client.Client
+	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
 //+kubebuilder:rbac:groups=hanoi.com,resources=towerchallenges,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=hanoi.com,resources=towerchallenges/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=hanoi.com,resources=towerchallenges/finalizers,verbs=update
+//+kubebuilder:rbac:groups="",resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile handles the actual reconciliation logic of the TowerChallenge controller.
 func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -51,9 +55,26 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	moves := TowerOfHanoi(towerChallenge.Spec.NumDisks, "Source", "Auxiliary", "Destination")
 
 	// Update ConfigMaps based on game state
-	// For now, let's just log the moves
 	for _, move := range moves {
-		log.Info(move)
+		// Create or update ConfigMap for each move
+		configMap := &corev1.ConfigMap{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      fmt.Sprintf("move-%s", move),
+				Namespace: req.Namespace,
+			},
+			Data: map[string]string{
+				"move": move,
+			},
+		}
+
+		// Try to create or update the ConfigMap
+		if err := r.CreateOrUpdateConfigMap(ctx, configMap); err != nil {
+			log.Error(err, "Failed to create or update ConfigMap", "configmap", configMap.Name)
+			return ctrl.Result{}, err
+		}
+
+		// Log successful creation or update
+		log.Info("ConfigMap created or updated", "configmap", configMap.Name)
 	}
 
 	return ctrl.Result{}, nil
@@ -77,4 +98,27 @@ func TowerOfHanoi(numDisks int, source, auxiliary, destination string) []string 
 	moves = append(moves, fmt.Sprintf("Move disk %d from %s to %s", numDisks, source, destination))
 	moves = append(moves, TowerOfHanoi(numDisks-1, auxiliary, source, destination)...)
 	return moves
+}
+
+// CreateOrUpdateConfigMap creates or updates the given ConfigMap in the cluster
+func (r *TowerChallengeReconciler) CreateOrUpdateConfigMap(ctx context.Context, configMap *corev1.ConfigMap) error {
+	found := &corev1.ConfigMap{}
+	err := r.Get(ctx, client.ObjectKey{Namespace: configMap.Namespace, Name: configMap.Name}, found)
+	if err != nil && errors.IsNotFound(err) {
+		log.Info("Creating a new ConfigMap", "Namespace", configMap.Namespace, "Name", configMap.Name)
+		err = r.Create(ctx, configMap)
+		if err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	} else {
+		log.Info("Updating ConfigMap", "Namespace", configMap.Namespace, "Name", configMap.Name)
+		found.Data = configMap.Data
+		err = r.Update(ctx, found)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
