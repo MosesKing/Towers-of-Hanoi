@@ -102,3 +102,40 @@ kubectl apply -f towerchallenge.yaml
 ```bash 
 customresourcedefinition.apiextensions.k8s.io/towerchallenges.hanoi.com created
 ```
+
+## Creating the New Operator 
+
+- We will be using  the Operator SDK. Which will setup the basic project structor including the necessary configs for the project. 
+
+We've created a directory for this to go into and we run this command inside the folder: 
+
+```bash
+mkdir tower-challenge-operator
+cd tower-challenge-operator
+```
+
+```bash
+operator-sdk init --domain=hanoi.com --repo=github.com/yourusername/tower-challenge-operator
+```
+### Step 3
+Now that you have your operator project initialized, you'll create the API type that corresponds to your CRD and the controller.
+
+Create the API and Controller:
+Run the following command to create an API and corresponding controller:
+bash
+Copy code
+operator-sdk create api --group=hanoi --version=v1alpha1 --kind=TowerChallenge --resource --controller
+This command creates:
+A new custom resource definition (CRD) for TowerChallenge, under the API group hanoi.com and version v1alpha1.
+The controller code in controllers/towerchallenge_controller.go that will watch and reconcile TowerChallenge resources.
+
+
+```bash
+operator-sdk create api --group=hanoi --version=v1alpha1 --kind=TowerChallenge --resource --controller
+```
+#### Run make manifests:
+
+This will update your project with the latest CRD manifests and RBAC configurations.
+```bash
+make manifests
+```
