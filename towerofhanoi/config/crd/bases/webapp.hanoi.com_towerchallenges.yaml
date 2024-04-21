@@ -1,0 +1,65 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.14.0
+  name: towerchallenges.webapp.hanoi.com
+spec:
+  group: webapp.hanoi.com
+  names:
+    kind: TowerChallenge
+    listKind: TowerChallengeList
+    plural: towerchallenges
+    singular: towerchallenge
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: TowerChallenge is the Schema for the towerchallenges API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: TowerChallengeSpec defines the desired state of TowerChallenge
+            properties:
+              discs:
+                description: Discs is the number of discs in the Tower of Hanoi challenge
+                minimum: 1
+                type: integer
+            required:
+            - discs
+            type: object
+          status:
+            description: TowerChallengeStatus defines the observed state of TowerChallenge
+            properties:
+              message:
+                type: string
+              steps:
+                description: Steps represent the moves to solve the problem, formatted
+                  as a series of instructions
+                items:
+                  type: string
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

@@ -1,0 +1,32 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - webapp.hanoi.com
+  resources:
+  - towerchallenges
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - webapp.hanoi.com
+  resources:
+  - towerchallenges/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - webapp.hanoi.com
+  resources:
+  - towerchallenges/status
+  verbs:
+  - get
+  - patch
+  - update
