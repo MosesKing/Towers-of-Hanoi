@@ -24,7 +24,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"github.com/MosesKing/tower-challenge-operator/test/utils"
+	"github.com/MosesKing/Towers-of-Hanoi/test/utils"
 )
 
 const namespace = "tower-challenge-operator-system"

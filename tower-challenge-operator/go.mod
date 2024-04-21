@@ -1,4 +1,4 @@
-module github.com/MosesKing/tower-challenge-operator
+module github.com/MosesKing/Towers-of-Hanoi
 
 go 1.20
 

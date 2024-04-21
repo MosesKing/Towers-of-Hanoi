@@ -9,5 +9,15 @@ plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
 projectName: tower-challenge-operator
-repo: github.com/MosesKing/tower-challenge-operator
+repo: github.com/MosesKing/Towers-of-Hanoi
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: hanoi.com
+  group: hanoi
+  kind: TowerChallenge
+  path: github.com/MosesKing/Towers-of-Hanoi/api/v1alpha1
+  version: v1alpha1
 version: "3"
