@@ -145,3 +145,24 @@ make manifests
 - Go into controllers/towerchallenge_controller.go
 - Implement the logic to handle the creation, update, and deletion of TowerChallenge resources. 
 - Intially we want to just  log the events to understand the lifecycle of the resources. We will later implement the logic for the Towers of Hanoi Problem and manage the Kubernetes ConfigMaps as specified in our CRD. 
+
+
+### Build and Deploy our Kubernetes Operator
+
+make docker-build IMG="yourregistry/tower-challenge-operator:v1.0"
+
+What it does: This command builds a Docker image of your operator. The IMG parameter specifies the name and tag of the Docker image. The build process involves compiling your Go code, linking all dependencies, and packaging everything needed to run the operator into a Docker container image.
+Why it's important: Building a Docker image is crucial because it encapsulates your operator code and its runtime environment. This ensures that the operator runs consistently across any Kubernetes environment, regardless of underlying differences in OS or installed libraries. Docker containers provide isolation, ensuring that the environment where your operator runs is exactly what you expect, eliminating the "it works on my machine" problem.
+
+
+2. make docker-push IMG="yourregistry/tower-challenge-operator:v1.0"
+
+What it does: After building the Docker image, this command pushes it to a Docker registry specified in the IMG parameter. A Docker registry is a storage and content delivery system, holding named Docker images, available in different tagged versions.
+Why it's important: Pushing the image to a registry makes it accessible for deployment across all nodes in your Kubernetes cluster or even across different clusters. Whether you're working in a development, staging, or production environment, pushing the image to a registry allows you and others to pull the image to any Kubernetes cluster that has access to the registry. This step is essential for continuous integration and continuous deployment (CI/CD) workflows, enabling automated testing and deployment of your operator.
+
+
+3. Now we need to add our additional logic for configuration RBAC/CRD/OPERATORS
+
+4. Now We implement our Towers of Hanoi Logic and into our controller and types files 
+towerchallenge_types.go
+towerchallenge_controller.go
