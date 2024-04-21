@@ -1,19 +1,3 @@
-/*
-Copyright 2024.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
-
 package controller
 
 import (
@@ -38,18 +22,14 @@ type TowerChallengeReconciler struct {
 //+kubebuilder:rbac:groups=hanoi.hanoi.com,resources=towerchallenges/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=hanoi.hanoi.com,resources=towerchallenges/finalizers,verbs=update
 
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
+// Reconcile handles the actual reconciliation logic of the TowerChallenge controller.
 func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.Log.WithValues("towerchallenge", req.NamespacedName)
-	// Establish a logger instance for structured logging throughout the reconciliation process.
-	// Log entries will be tagged with the resource type 'towerchallenge' and the specific instance being reconciled.
+
 	// Fetch the TowerChallenge instance using the namespace and name from the Request object.
-	
 	towerChallenge := &hanoiv1alpha1.TowerChallenge{}
 	err := r.Get(ctx, req.NamespacedName, towerChallenge)
 	if err != nil {
-		// Check if the TowerChallenge resource was not found in the cluster.
 		if errors.IsNotFound(err) {
 			// The resource could have been deleted after the reconcile request was queued.
 			// Log a message indicating that the resource was not found, and return gracefully.
@@ -59,8 +39,15 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 		// Log the error encountered while trying to fetch the TowerChallenge resource,
 		// then requeue the request to be tried again.
+		log.Error(err, "Failed to get TowerChallenge")
+		return ctrl.Result{}, err
+	}
+
+	// Log a message indicating that the TowerChallenge resource is being handled.
+	// This is useful for tracking which resources are currently processed.
 	log.Info("Handling TowerChallenge resource")
 
+	// Here you might want to add additional logic to handle the TowerChallenge resource properly.
 	return ctrl.Result{}, nil
 }
 
