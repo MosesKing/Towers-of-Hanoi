@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -36,20 +37,20 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
+	startTime := time.Now()
+	towerChallenge.Status.StartTime = metav1.Time{Time: startTime}
+
 	if err := validateTowerChallenge(towerChallenge); err != nil {
-		log.Error(err, "Invalid TowerChallenge specifications")
-		towerChallenge.Status.Message = "Error: " + err.Error()
+		towerChallenge.Status.Phase = "Failed"
+		towerChallenge.Status.ErrorMessage = err.Error()
 		_ = r.Status().Update(ctx, &towerChallenge)
 		return ctrl.Result{}, err
 	}
 
 	steps := solveHanoi(towerChallenge.Spec.Discs, "A", "C", "B")
 	towerChallenge.Status.Steps = steps
-	if err := r.Status().Update(ctx, &towerChallenge); err != nil {
-		log.Error(err, "Failed to update TowerChallenge status")
-		return ctrl.Result{}, err
-	}
 
+	configMapNames := []string{}
 	existingCMs := &corev1.ConfigMapList{}
 	listOpts := []client.ListOption{
 		client.InNamespace(req.Namespace),
@@ -58,11 +59,6 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	if err := r.List(ctx, existingCMs, listOpts...); err != nil {
 		log.Error(err, "Unable to list ConfigMaps")
 		return ctrl.Result{}, err
-	}
-
-	existingCMsMap := make(map[string]*corev1.ConfigMap)
-	for _, cm := range existingCMs.Items {
-		existingCMsMap[cm.Name] = cm.DeepCopy()
 	}
 
 	for i, step := range steps {
@@ -88,29 +84,20 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 				return ctrl.Result{}, err
 			}
 		}
+		configMapNames = append(configMapNames, cmName)
 	}
 
-	for name, cm := range existingCMsMap {
-		if !needed(steps, name, towerChallenge.Name) {
-			if err := r.Delete(ctx, cm); err != nil {
-				log.Error(err, "Failed to delete ConfigMap", "ConfigMap", name)
-				return ctrl.Result{}, err
-			}
-		}
+	towerChallenge.Status.ConfigMapNames = configMapNames
+	towerChallenge.Status.ConfigMapsCreated = true
+	towerChallenge.Status.EndTime = metav1.Time{Time: time.Now()}
+
+	if err := r.Status().Update(ctx, &towerChallenge); err != nil {
+		log.Error(err, "Failed to update TowerChallenge status at the end")
+		return ctrl.Result{}, err
 	}
 
-	log.Info("Reconciled TowerChallenge", "steps", steps)
+	log.Info("Reconciled TowerChallenge successfully")
 	return ctrl.Result{}, nil
-}
-
-func needed(steps []string, cmName, challengeName string) bool {
-	for i := range steps {
-		expectedName := fmt.Sprintf("%s-move-%d", challengeName, i+1)
-		if expectedName == cmName {
-			return true
-		}
-	}
-	return false
 }
 
 func validateTowerChallenge(tc webappv1alpha1.TowerChallenge) error {
@@ -118,13 +105,6 @@ func validateTowerChallenge(tc webappv1alpha1.TowerChallenge) error {
 		return errors.New("the number of discs must be positive")
 	}
 	return nil
-}
-
-func (r *TowerChallengeReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&webappv1alpha1.TowerChallenge{}).
-		Owns(&corev1.ConfigMap{}).
-		Complete(r)
 }
 
 func solveHanoi(n int, from, to, aux string) []string {
