@@ -7,4 +7,4 @@ metadata:
     app.kubernetes.io/name: towerofhanoi
     app.kubernetes.io/managed-by: kustomize
 spec:
-  discs: 3  
+  discs: 5 
