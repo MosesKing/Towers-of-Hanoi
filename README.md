@@ -20,7 +20,7 @@ minikube start --driver=docker
 kubectl get nodes
 ```
 
-output: 
+### The Output should be similar to this: 
 ```bash
 kubectl get nodes
 NAME       STATUS   ROLES           AGE   VERSION
@@ -38,11 +38,23 @@ helm repo add crossplane-stable https://charts.crossplane.io/stable
 helm repo update
 ```
 
+### The Output should be similar to this:
+
+``` bash
+"crossplane-stable" has been added to your repositories
+--- 
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "crossplane-stable" chart repository
+Update Complete. ⎈Happy Helming!⎈
+```
 Install Crossplane into Your Cluster
 After adding the Helm repository, you can install Crossplane into your Kubernetes cluster:
 ``` bash
 helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
 ```
+
+### The Output should be similar to this:
+
 ``` bash
 C:\Windows\System32>helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
 NAME: crossplane
@@ -66,6 +78,7 @@ To ensure Crossplane has been installed successfully, check the Crossplane compo
 ``` bash
 kubectl get all -n crossplane-system
 ```
+### The Output should be similar to this:
 
 ``` bash
 C:\Windows\System32>kubectl get pods -n crossplane-system
