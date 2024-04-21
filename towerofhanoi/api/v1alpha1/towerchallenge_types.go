@@ -4,9 +4,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // TowerChallengeSpec defines the desired state of TowerChallenge
 type TowerChallengeSpec struct {
 	// Discs is the number of discs in the Tower of Hanoi challenge
@@ -19,6 +16,19 @@ type TowerChallengeStatus struct {
 	// Steps represent the moves to solve the problem, formatted as a series of instructions
 	Steps   []string `json:"steps,omitempty"`
 	Message string   `json:"message,omitempty"`
+
+	// Phase represents the current phase of the operation (e.g., "Pending", "Completed")
+	Phase string `json:"phase,omitempty"`
+	// ConfigMapsCreated indicates whether the config maps were successfully created
+	ConfigMapsCreated bool `json:"configMapsCreated"`
+	// ConfigMapNames lists the names of the created config maps
+	ConfigMapNames []string `json:"configMapNames,omitempty"`
+	// StartTime is the time when the operation started
+	StartTime metav1.Time `json:"startTime,omitempty"`
+	// EndTime is the time when the operation completed
+	EndTime metav1.Time `json:"endTime,omitempty"`
+	// ErrorMessage contains details of any errors that occurred
+	ErrorMessage string `json:"errorMessage,omitempty"`
 }
 
 //+kubebuilder:object:root=true

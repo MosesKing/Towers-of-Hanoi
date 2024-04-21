@@ -14,74 +14,52 @@ spec:
     singular: towerchallenge
   scope: Namespaced
   versions:
-    - name: v1alpha1
-      schema:
-        openAPIV3Schema:
-          description: TowerChallenge is the Schema for the towerchallenges API
-          properties:
-            apiVersion:
-              description: |-
-                APIVersion defines the versioned schema of this representation of an object.
-                Servers should convert recognized schemas to the latest internal value, and
-                may reject unrecognized values.
-                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-              type: string
-            kind:
-              description: |-
-                Kind is a string value representing the REST resource this object represents.
-                Servers may infer this from the endpoint the client submits requests to.
-                Cannot be updated.
-                In CamelCase.
-                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
-              type: string
-            metadata:
-              type: object
-            spec:
-              description: TowerChallengeSpec defines the desired state of TowerChallenge
-              properties:
-                discs:
-                  description: Discs is the number of discs in the Tower of Hanoi challenge
-                  minimum: 1
-                  type: integer
-              required:
-                - discs
-              type: object
-            status:
-              description: TowerChallengeStatus defines the observed state of TowerChallenge
-              properties:
-                phase:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: TowerChallenge is the Schema for the towerchallenges API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: TowerChallengeSpec defines the desired state of TowerChallenge
+            properties:
+              discs:
+                description: Discs is the number of discs in the Tower of Hanoi challenge
+                minimum: 1
+                type: integer
+            required:
+            - discs
+            type: object
+          status:
+            description: TowerChallengeStatus defines the observed state of TowerChallenge
+            properties:
+              message:
+                type: string
+              steps:
+                description: Steps represent the moves to solve the problem, formatted
+                  as a series of instructions
+                items:
                   type: string
-                  description: "The current phase of the operation."
-                configMapsCreated:
-                  type: boolean
-                  description: "Flag to indicate if config maps were successfully created."
-                configMapNames:
-                  type: array
-                  items:
-                    type: string
-                  description: "List of names of config maps created during the operation."
-                startTime:
-                  type: string
-                  format: date-time
-                  description: "The start time of the operation."
-                endTime:
-                  type: string
-                  format: date-time
-                  description: "The end time of the operation."
-                errorMessage:
-                  type: string
-                  nullable: true
-                  description: "Error message if the operation fails, otherwise null."
-                message:
-                  type: string
-                steps:
-                  description: Steps represent the moves to solve the problem, formatted as a series of instructions
-                  items:
-                    type: string
-                  type: array
-              type: object
-          type: object
-      served: true
-      storage: true
-      subresources:
-        status: {}
+                type: array
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
