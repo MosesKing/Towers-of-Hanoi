@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: moefromthemo/tower-challenge-operator
-  newTag: v1.0
+  newTag: v1.1
