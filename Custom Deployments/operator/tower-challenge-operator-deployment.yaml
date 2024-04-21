@@ -17,6 +17,7 @@ spec:
       containers:
       - name: tower-challenge-operator
         image: moefromthemo/tower-challenge-operator:v1.0
+        imagePullPolicy: Always
         ports:
         - containerPort: 6000
           name: metrics
