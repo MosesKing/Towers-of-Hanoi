@@ -1,4 +1,4 @@
-apiVersion: hanoi.hanoi.com/v1alpha1
+apiVersion: hanoi.com/v1alpha1
 kind: TowerChallenge
 metadata:
   labels:

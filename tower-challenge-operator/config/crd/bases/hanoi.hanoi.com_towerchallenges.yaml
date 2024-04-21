@@ -4,9 +4,9 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: towerchallenges.hanoi.hanoi.com
+  name: towerchallenges.hanoi.com
 spec:
-  group: hanoi.hanoi.com
+  group: hanoi.com
   names:
     kind: TowerChallenge
     listKind: TowerChallengeList

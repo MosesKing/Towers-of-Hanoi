@@ -12,7 +12,7 @@ metadata:
   name: towerchallenge-editor-role
 rules:
 - apiGroups:
-  - hanoi.hanoi.com
+  - hanoi.com
   resources:
   - towerchallenges
   verbs:
@@ -24,7 +24,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - hanoi.hanoi.com
+  - hanoi.com
   resources:
   - towerchallenges/status
   verbs:
