@@ -15,7 +15,7 @@ spec:
             spec:
               type: object
               properties:
-                discs:
+                numDisks:
                   type: integer
                   minimum: 1
             status:
