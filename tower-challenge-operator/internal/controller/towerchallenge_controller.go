@@ -4,15 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	hanoiv1alpha1 "github.com/MosesKing/Towers-of-Hanoi/api/v1alpha1"
+	"github.com/go-logr/logr"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	hanoiv1alpha1 "github.com/MosesKing/Towers-of-Hanoi/api/v1alpha1"
-	"github.com/go-logr/logr"
-	corev1 "k8s.io/api/core/v1"
 )
 
 // TowerChallengeReconciler reconciles a TowerChallenge object
@@ -74,7 +74,7 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 
 		// Log successful creation or update
-		log.Info("ConfigMap created or updated", "configmap", configMap.Name)
+		r.Log.Info("ConfigMap created or updated", "configmap", configMap.Name)
 	}
 
 	return ctrl.Result{}, nil
@@ -105,7 +105,7 @@ func (r *TowerChallengeReconciler) CreateOrUpdateConfigMap(ctx context.Context, 
 	found := &corev1.ConfigMap{}
 	err := r.Get(ctx, client.ObjectKey{Namespace: configMap.Namespace, Name: configMap.Name}, found)
 	if err != nil && errors.IsNotFound(err) {
-		log.Info("Creating a new ConfigMap", "Namespace", configMap.Namespace, "Name", configMap.Name)
+		r.Log.Info("Creating a new ConfigMap", "Namespace", configMap.Namespace, "Name", configMap.Name)
 		err = r.Create(ctx, configMap)
 		if err != nil {
 			return err
@@ -113,7 +113,7 @@ func (r *TowerChallengeReconciler) CreateOrUpdateConfigMap(ctx context.Context, 
 	} else if err != nil {
 		return err
 	} else {
-		log.Info("Updating ConfigMap", "Namespace", configMap.Namespace, "Name", configMap.Name)
+		r.Log.Info("Updating ConfigMap", "Namespace", configMap.Namespace, "Name", configMap.Name)
 		found.Data = configMap.Data
 		err = r.Update(ctx, found)
 		if err != nil {
