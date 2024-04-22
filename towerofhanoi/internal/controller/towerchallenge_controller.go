@@ -2,11 +2,11 @@ package controller
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors" // Added import for error handling
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -63,7 +63,7 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	existingCMsMap := make(map[string]*corev1.ConfigMap)
 	for _, cm := range existingCMs.Items {
-		existingCMsMap[cm.Name] = cm.DeepCopy()
+		existingCMsMap[cm.Name] = &cm
 	}
 
 	for i, step := range steps {
@@ -72,7 +72,7 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		if found {
 			cm.Data = map[string]string{"move": step}
 			if err := r.Update(ctx, cm); err != nil {
-				log.Error(err, "Failed to update ConfigMap for the move", "ConfigMap", cmName)
+				log.Error(err, "Failed to update ConfigMap", "ConfigMap", cmName)
 				return ctrl.Result{}, err
 			}
 		} else {
@@ -85,11 +85,24 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 				Data: map[string]string{"move": step},
 			}
 			if err := r.Create(ctx, cm); err != nil {
-				log.Error(err, "Failed to create ConfigMap for the move", "ConfigMap", cmName)
+				log.Error(err, "Failed to create ConfigMap", "ConfigMap", cmName)
 				return ctrl.Result{}, err
 			}
 		}
 		configMapNames = append(configMapNames, cmName)
+	}
+
+	for name, cm := range existingCMsMap {
+		if !needed(steps, name) && cm != nil {
+			if err := r.Delete(ctx, cm); err != nil {
+				if errors.IsNotFound(err) {
+					log.Info("ConfigMap not found, no need to delete", "ConfigMap", name)
+				} else {
+					log.Error(err, "Failed to delete ConfigMap", "ConfigMap", name)
+					return ctrl.Result{}, err
+				}
+			}
+		}
 	}
 
 	towerChallenge.Status.ConfigMapNames = configMapNames
@@ -97,12 +110,21 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	towerChallenge.Status.EndTime = metav1.Time{Time: time.Now()}
 
 	if err := r.Status().Update(ctx, &towerChallenge); err != nil {
-		log.Error(err, "Failed to update TowerChallenge status at the end")
+		log.Error(err, "Failed to update TowerChallenge status")
 		return ctrl.Result{}, err
 	}
 
 	log.Info("Reconciled TowerChallenge successfully")
 	return ctrl.Result{}, nil
+}
+
+func needed(steps []string, cmName string) bool {
+	for _, step := range steps {
+		if step == cmName {
+			return true
+		}
+	}
+	return false
 }
 
 func validateTowerChallenge(tc webappv1alpha1.TowerChallenge) error {
@@ -121,4 +143,12 @@ func solveHanoi(n int, from, to, aux string) []string {
 	moves = append(moves, fmt.Sprintf("Move disk %d from %s to %s", n, from, to))
 	moves = append(moves, solveHanoi(n-1, aux, to, from)...)
 	return moves
+}
+
+// SetupWithManager sets up the controller with the Manager.
+func (r *TowerChallengeReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	return ctrl.NewControllerManagedBy(mgr).
+		For(&webappv1alpha1.TowerChallenge{}).
+		Owns(&corev1.ConfigMap{}).
+		Complete(r)
 }
