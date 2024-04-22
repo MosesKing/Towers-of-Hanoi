@@ -4,6 +4,13 @@ metadata:
   name: towerchallenges.hanoi.com
 spec:
   group: hanoi.com
+  names:
+    kind: TowerChallenge
+    plural: towerchallenges
+    singular: towerchallenge
+    shortNames:
+      - tc
+  scope: Namespaced
   versions:
     - name: v1alpha1
       served: true
@@ -18,10 +25,18 @@ spec:
                 discs:
                   type: integer
                   minimum: 1
-  scope: Namespaced
-  names:
-    plural: towerchallenges
-    singular: towerchallenge
-    kind: TowerChallenge
-    shortNames:
-    - tc
+            status:
+              type: object
+              properties:
+                lastUpdated:
+                  type: string
+                  format: date-time
+                  description: "Timestamp of the last status update"
+                message:
+                  type: string
+                  description: "Descriptive message about the current state"
+                phase:
+                  type: string
+                  description: "Current phase of the challenge"
+      subresources:
+        status: {}
