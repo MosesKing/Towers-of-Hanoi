@@ -1,6 +1,7 @@
 package v1alpha1
 
 import (
+	xpv1 "github.com/crossplane/crossplane-runtime/apis/common/v1" // Use Crossplane's common v1 for Conditions
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -13,6 +14,9 @@ type TowerChallengeSpec struct {
 
 // TowerChallengeStatus defines the observed state of TowerChallenge
 type TowerChallengeStatus struct {
+	// Standard condition fields used by Crossplane to report the observed state of the resource.
+	Conditions []xpv1.Condition `json:"conditions,omitempty"`
+
 	// Steps represent the moves to solve the problem, formatted as a series of instructions
 	Steps   []string `json:"steps,omitempty"`
 	Message string   `json:"message,omitempty"`
@@ -33,6 +37,11 @@ type TowerChallengeStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:scope=Cluster
+//+kubebuilder:printcolumn:name="Discs",type="integer",JSONPath=".spec.discs"
+//+kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase"
+//+kubebuilder:printcolumn:name="StartTime",type="date",JSONPath=".status.startTime"
+//+kubebuilder:printcolumn:name="EndTime",type="date",JSONPath=".status.endTime"
 
 // TowerChallenge is the Schema for the towerchallenges API
 type TowerChallenge struct {

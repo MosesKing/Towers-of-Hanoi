@@ -12,9 +12,22 @@ spec:
     listKind: TowerChallengeList
     plural: towerchallenges
     singular: towerchallenge
-  scope: Namespaced
+  scope: Cluster
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .spec.discs
+      name: Discs
+      type: integer
+    - jsonPath: .status.phase
+      name: Phase
+      type: string
+    - jsonPath: .status.startTime
+      name: StartTime
+      type: date
+    - jsonPath: .status.endTime
+      name: EndTime
+      type: date
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: TowerChallenge is the Schema for the towerchallenges API
@@ -49,6 +62,43 @@ spec:
           status:
             description: TowerChallengeStatus defines the observed state of TowerChallenge
             properties:
+              conditions:
+                description: Standard condition fields used by Crossplane to report
+                  the observed state of the resource.
+                items:
+                  description: A Condition that may apply to a resource.
+                  properties:
+                    lastTransitionTime:
+                      description: |-
+                        LastTransitionTime is the last time this condition transitioned from one
+                        status to another.
+                      format: date-time
+                      type: string
+                    message:
+                      description: |-
+                        A Message containing details about this condition's last transition from
+                        one status to another, if any.
+                      type: string
+                    reason:
+                      description: A Reason for this condition's last transition from
+                        one status to another.
+                      type: string
+                    status:
+                      description: Status of this condition; is it currently True,
+                        False, or Unknown?
+                      type: string
+                    type:
+                      description: |-
+                        Type of this condition. At most one of each condition type may apply to
+                        a resource at any point in time.
+                      type: string
+                  required:
+                  - lastTransitionTime
+                  - reason
+                  - status
+                  - type
+                  type: object
+                type: array
               configMapNames:
                 description: ConfigMapNames lists the names of the created config
                   maps
