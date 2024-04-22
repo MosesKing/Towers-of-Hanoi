@@ -2,11 +2,14 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
+	// Standard library errors
+
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/errors" // Added import for error handling
+	kerrors "k8s.io/apimachinery/pkg/api/errors" // Correct usage of alias for Kubernetes errors
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -95,7 +98,7 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	for name, cm := range existingCMsMap {
 		if !needed(steps, name) && cm != nil {
 			if err := r.Delete(ctx, cm); err != nil {
-				if errors.IsNotFound(err) {
+				if kerrors.IsNotFound(err) {
 					log.Info("ConfigMap not found, no need to delete", "ConfigMap", name)
 				} else {
 					log.Error(err, "Failed to delete ConfigMap", "ConfigMap", name)
