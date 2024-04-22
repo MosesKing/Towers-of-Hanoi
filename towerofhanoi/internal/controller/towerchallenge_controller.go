@@ -61,6 +61,11 @@ func (r *TowerChallengeReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, err
 	}
 
+	existingCMsMap := make(map[string]*corev1.ConfigMap)
+	for _, cm := range existingCMs.Items {
+		existingCMsMap[cm.Name] = cm.DeepCopy()
+	}
+
 	for i, step := range steps {
 		cmName := fmt.Sprintf("%s-move-%d", towerChallenge.Name, i+1)
 		cm, found := existingCMsMap[cmName]
