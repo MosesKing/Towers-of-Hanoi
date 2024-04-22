@@ -1,104 +1,72 @@
-# Towers-of-Hanoi
+# Towers-of-Hanoi Kubernetes Integration Documentation
+
+This document provides a comprehensive guide on setting up and deploying a Towers of Hanoi challenge within a Kubernetes environment, leveraging the Crossplane control plane to manage custom resources and compositions.
+
+## Overview
+The project involves deploying a Kubernetes-based solution for managing the "Tower of Hanoi" puzzle. It includes creating a custom Kubernetes controller, defining the necessary Custom Resource Definitions (CRDs), and configuring Crossplane compositions to facilitate the orchestration and operational management of puzzle instances.
 
 ## Step 1: Setting Up a Kubernetes Cluster
+### Initial Setup
+For development and testing, a local Kubernetes cluster is set up using Minikube. This involves installing virtualization tools and Minikube itself.
 
-Before you begin, ensure you have a Kubernetes cluster. You can set this up on a cloud provider like AWS, GCP, or Azure, or locally using Minikube or kind. The instructions below describe setting up a local cluster using Minikube for development purposes.
+1. **Virtualization Environment Setup**:
+   - Verify and set up a virtualization tool like VirtualBox.
+  
+2. **Minikube Installation**:
+   - Follow the installation guide on the [Minikube GitHub page](https://github.com/kubernetes/minikube).
 
-### Install Minikube
-
-1. **Prepare your virtualization environment**: Confirm that you have a virtualization tool such as VirtualBox.
-2. **Install Minikube**: Follow the installation instructions on the [Minikube GitHub page](https://github.com/kubernetes/minikube).
-
-### Start the Minikube Cluster
+### Start and Verify the Minikube Cluster
+- Start Minikube with Docker as the driver and verify that the cluster is operational by checking the status of the nodes.
 
 ```bash
 minikube start --driver=docker
-```
-
-### Verify the Cluster is Running
-``` bash
 kubectl get nodes
-```
-
-### The Output should be similar to this: 
-```bash
-kubectl get nodes
-NAME       STATUS   ROLES           AGE   VERSION
-minikube   Ready    control-plane   24m   v1.30.0
 ```
 
 ## Step 2: Install and Set Up Crossplane
-
-### Install Crossplane
-
-To install Crossplane using a Helm chart, run the following commands:
+### Crossplane Installation
+Install Crossplane using Helm by adding the stable repository, updating it, and then deploying Crossplane into the Kubernetes cluster.
 
 ```bash
 helm repo add crossplane-stable https://charts.crossplane.io/stable
 helm repo update
-```
-
-### The Output should be similar to this:
-
-``` bash
-"crossplane-stable" has been added to your repositories
---- 
-Hang tight while we grab the latest from your chart repositories...
-...Successfully got an update from the "crossplane-stable" chart repository
-Update Complete. ⎈Happy Helming!⎈
-```
-Install Crossplane into Your Cluster
-After adding the Helm repository, you can install Crossplane into your Kubernetes cluster:
-``` bash
 helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
 ```
 
-### The Output should be similar to this:
+### Verify Crossplane Installation
+Ensure that all Crossplane components are running correctly in the `crossplane-system` namespace.
 
-``` bash
-C:\Windows\System32>helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
-NAME: crossplane
-LAST DEPLOYED: Sat Apr 20 16:55:06 2024
-NAMESPACE: crossplane-system
-STATUS: deployed
-REVISION: 1
-TEST SUITE: None
-NOTES:
-Release: crossplane
-
-Chart Name: crossplane
-Chart Description: Crossplane is an open source Kubernetes add-on that enables platform teams to assemble infrastructure from multiple vendors, and expose higher level self-service APIs for application teams to consume.
-Chart Version: 1.15.2
-Chart Application Version: 1.15.2
-
-Kube Version: v1.30.0 
-```
-Verify Installation
-To ensure Crossplane has been installed successfully, check the Crossplane components in the crossplane-system namespace:
-``` bash
+```bash
 kubectl get all -n crossplane-system
 ```
-### The Output should be similar to this:
 
-``` bash
-C:\Windows\System32>kubectl get pods -n crossplane-system
-NAME                                      READY   STATUS    RESTARTS   AGE
-crossplane-6d84f5ccdf-pm9sk               1/1     Running   0          22s
-crossplane-rbac-manager-fd57f7d55-ftbzc   1/1     Running   0          22s
-```
+## Step 3: Implement Tower of Hanoi Logic with CRDs and Controller
+### Custom Resource Definition (CRD)
+- The `TowerChallenge` CRD is introduced to manage the lifecycle of the Tower of Hanoi challenges within the cluster.
 
-
-## Apply our Custom Resource Definition (CRD): 
-
-- Created CRDs are found in this repository under CRDs: 
-
-Apply the CRD to our kubernetes cluster using the following command: 
+### Apply the CRD
+Deploy the CRD to the Kubernetes cluster:
 
 ```bash
 kubectl apply -f towerchallenge.yaml
 ```
 
-### Output should be similar: 
-```bash 
-customresourcedefinition.apiextensions.k8s.io/towerchallenges.hanoi.com created
+## Step 4: Controller Implementation
+### TowerChallengeReconciler
+This custom Kubernetes controller orchestrates the resolution of the Tower of Hanoi puzzle. It handles resource lifecycle management, including the creation, update, and cleanup of associated ConfigMaps.
+
+### Key Features
+- **Reconciliation Logic**: Manages the initialization, move calculation, and cleanup of resources.
+- **Validation**: Ensures valid puzzle configurations.
+- **ConfigMap Management**: Updates and creates ConfigMaps as needed.
+
+## Step 5: Crossplane Composition Setup
+### Composition Definition
+Defines how the `CompositeResourceTowerChallenge` is composed of underlying resources, specifically focusing on managing puzzle instances and associated logging configurations.
+
+### Deployment and Configuration
+Deploy and configure the composition to link challenge instances with their logging mechanisms, ensuring comprehensive management and observability.
+
+```bash
+kubectl apply -f composition.yaml
 ```
