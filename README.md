@@ -5,68 +5,37 @@ This document provides a comprehensive guide on setting up and deploying a Tower
 ## Overview
 The project involves deploying a Kubernetes-based solution for managing the "Tower of Hanoi" puzzle. It includes creating a custom Kubernetes controller, defining the necessary Custom Resource Definitions (CRDs), and configuring Crossplane compositions to facilitate the orchestration and operational management of puzzle instances.
 
-## Step 1: Setting Up a Kubernetes Cluster
-### Initial Setup
-For development and testing, a local Kubernetes cluster is set up using Minikube. This involves installing virtualization tools and Minikube itself.
+Tower of Hanoi Kubernetes Custom Resource and Composition Documentation
 
-1. **Virtualization Environment Setup**:
-   - Verify and set up a virtualization tool like VirtualBox.
-  
-2. **Minikube Installation**:
-   - Follow the installation guide on the [Minikube GitHub page](https://github.com/kubernetes/minikube).
+Overview:
+This documentation provides a comprehensive guide to utilizing Kubernetes Custom Resources (CRs) and Compositions to tackle the Tower of Hanoi problem within a Kubernetes environment. The Tower of Hanoi problem is a classic mathematical puzzle that involves moving a stack of disks from one rod to another, adhering to specific rules.
 
-### Start and Verify the Minikube Cluster
-- Start Minikube with Docker as the driver and verify that the cluster is operational by checking the status of the nodes.
+Components:
 
-```bash
-minikube start --driver=docker
-kubectl get nodes
-```
+    TowerChallenge Custom Resource Definition (CRD):
+        Resource Name: TowerChallenge
+        Description: This CRD defines a custom resource named TowerChallenge with a discs field indicating the number of discs in the Tower of Hanoi puzzle.
+        Usage: Users can create instances of TowerChallenge by specifying the number of discs, allowing Kubernetes to manage Tower of Hanoi challenges as custom resources.
 
-## Step 2: Install and Set Up Crossplane
-### Crossplane Installation
-Install Crossplane using Helm by adding the stable repository, updating it, and then deploying Crossplane into the Kubernetes cluster.
+    Composition for Tower Challenge:
+        Composition Name: tower-hanoi-composition
+        Description: This composition orchestrates the solving of Tower of Hanoi challenges by defining a pipeline that executes a function to calculate moves.
+        Usage: When a TowerChallenge instance is created, this composition is triggered to calculate the optimal moves required to solve the Tower of Hanoi puzzle with the specified number of discs.
 
-```bash
-helm repo add crossplane-stable https://charts.crossplane.io/stable
-helm repo update
-helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
-```
+    Composition for Tower Hanoi Solution:
+        Composition Name: tower-hanoi-composition (with label purpose: tower-hanoi-solution)
+        Description: This composition is responsible for generating the solution to the Tower of Hanoi puzzle by dynamically setting the moves in a ConfigMap.
+        Usage: Upon completion of move calculation, this composition updates a ConfigMap named tower-hanoi-moves with the optimal move sequence required to solve the Tower of Hanoi puzzle.
 
-### Verify Crossplane Installation
-Ensure that all Crossplane components are running correctly in the `crossplane-system` namespace.
+    Composite Resource Definition for XTowerChallenge:
+        Resource Name: XTowerChallenge
+        Description: This CRD defines a composite resource that corresponds to the TowerChallenge custom resource.
+        Usage: Kubernetes operators interact with instances of XTowerChallenge to manage Tower of Hanoi challenges, providing a standardized interface for creating, updating, and deleting TowerChallenge instances.
 
-```bash
-kubectl get all -n crossplane-system
-```
+Deployment:
+To utilize the Tower of Hanoi Kubernetes Custom Resource and Composition setup:
 
-## Step 3: Implement Tower of Hanoi Logic with CRDs and Controller
-### Custom Resource Definition (CRD)
-- The `TowerChallenge` CRD is introduced to manage the lifecycle of the Tower of Hanoi challenges within the cluster.
-
-### Apply the CRD
-Deploy the CRD to the Kubernetes cluster:
-
-```bash
-kubectl apply -f towerchallenge.yaml
-```
-
-## Step 4: Controller Implementation
-### TowerChallengeReconciler
-This custom Kubernetes controller orchestrates the resolution of the Tower of Hanoi puzzle. It handles resource lifecycle management, including the creation, update, and cleanup of associated ConfigMaps.
-
-### Key Features
-- **Reconciliation Logic**: Manages the initialization, move calculation, and cleanup of resources.
-- **Validation**: Ensures valid puzzle configurations.
-- **ConfigMap Management**: Updates and creates ConfigMaps as needed.
-
-## Step 5: Crossplane Composition Setup
-### Composition Definition
-Defines how the `CompositeResourceTowerChallenge` is composed of underlying resources, specifically focusing on managing puzzle instances and associated logging configurations.
-
-### Deployment and Configuration
-Deploy and configure the composition to link challenge instances with their logging mechanisms, ensuring comprehensive management and observability.
-
-```bash
-kubectl apply -f composition.yaml
-```
+    Apply the provided YAML manifests to your Kubernetes cluster to create the necessary CRDs, compositions, and composite resource definitions.
+    Create instances of TowerChallenge custom resources with the desired number of discs to initiate Tower of Hanoi challenges.
+    The defined compositions will automatically trigger the calculation of moves and update the solution in the tower-hanoi-moves ConfigMap.
+    Monitor the status of TowerChallenge instances and tower-hanoi-moves ConfigMap for the progress and solution of Tower of Hanoi challenges.
