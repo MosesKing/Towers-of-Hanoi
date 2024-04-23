@@ -39,3 +39,48 @@ To utilize the Tower of Hanoi Kubernetes Custom Resource and Composition setup:
     Create instances of TowerChallenge custom resources with the desired number of discs to initiate Tower of Hanoi challenges.
     The defined compositions will automatically trigger the calculation of moves and update the solution in the tower-hanoi-moves ConfigMap.
     Monitor the status of TowerChallenge instances and tower-hanoi-moves ConfigMap for the progress and solution of Tower of Hanoi challenges.
+
+
+Package Name: TowerOfHanoiSolver
+
+Overview:
+This Go package provides functionality to solve the Tower of Hanoi problem and generate Kubernetes ConfigMaps containing move descriptions. It is intended to be used as a serverless function within a Crossplane environment.
+
+Dependencies:
+- crossplane/crossplane-runtime: Used for logging and error handling.
+- crossplane/function-sdk-go/proto/v1beta1: Used for defining function input and output protobuf messages.
+- google.golang.org/protobuf/types/known/structpb: Used for creating structured data.
+
+Structs:
+1. Move: Represents a move in the Tower of Hanoi puzzle, consisting of the disk number, source rod, and destination rod.
+2. Function: Implements the FunctionRunnerServiceServer interface for running the Tower of Hanoi solving function.
+
+Functions:
+1. SolveTowerOfHanoi(n int, from, to, via string, moves *[]Move):
+   - Recursively solves the Tower of Hanoi puzzle.
+   - Parameters:
+     - n: The number of discs in the Tower of Hanoi puzzle.
+     - from: The source rod.
+     - to: The destination rod.
+     - via: The auxiliary rod.
+     - moves: Pointer to a slice of Move structs to store the sequence of moves.
+
+2. (f *Function) RunFunction(ctx context.Context, req *v1beta1.RunFunctionRequest) (*v1beta1.RunFunctionResponse, error):
+   - Implements the RunFunction method of the FunctionRunnerServiceServer interface.
+   - Parses the input to determine the number of discs.
+   - Solves the Tower of Hanoi puzzle.
+   - Generates ConfigMaps representing the moves and constructs a RunFunctionResponse containing these resources.
+   - Parameters:
+     - ctx: The context.Context object.
+     - req: The v1beta1.RunFunctionRequest containing the function input.
+   - Returns:
+     - rsp: The v1beta1.RunFunctionResponse containing the generated resources.
+     - error: Any error that occurred during function execution.
+
+Usage:
+1. Import the package into your Go code.
+2. Implement the necessary infrastructure to run serverless functions within a Crossplane environment.
+3. Use the RunFunction method of the Function struct to execute the Tower of Hanoi solving function, passing the appropriate RunFunctionRequest.
+4. Handle the returned RunFunctionResponse, which contains Kubernetes ConfigMaps representing the moves required to solve the Tower of Hanoi puzzle.
+
+Note: Ensure that the necessary dependencies are imported and configured within your Crossplane environment for seamless integration and execution of the Tower of Hanoi solving function.
