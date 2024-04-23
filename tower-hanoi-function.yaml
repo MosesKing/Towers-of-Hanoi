@@ -1,0 +1,13 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: tower-hanoi-composition
+spec:
+  compositeTypeRef:
+    apiVersion: hanoi.com/v1alpha1
+    kind: XTowerChallenge
+  mode: Pipeline
+  pipeline:
+    - step: calculate-moves
+      functionRef:
+        name: function-tower-hanoi

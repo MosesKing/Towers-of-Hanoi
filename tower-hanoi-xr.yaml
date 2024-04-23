@@ -1,0 +1,6 @@
+apiVersion: hanoi.com/v1alpha1
+kind: TowerChallenge
+metadata:
+  name: challenge3discs
+spec:
+  discs: 3  # This field specifies the number of discs

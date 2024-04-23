@@ -1,0 +1,21 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: tower-hanoi-composition
+  labels:
+    purpose: tower-hanoi-solution
+spec:
+  compositeTypeRef:
+    apiVersion: hanoi.com/v1alpha1
+    kind: XTowerChallenge
+  resources:
+    - name: tower-hanoi-moves
+      base:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          generateName: tower-hanoi-move-
+          labels:
+            hanoi: move
+        data:
+          move: "placeholder"  # This will need to be dynamically set by the function
