@@ -37,26 +37,21 @@ Advanced Approach
 For the second challenge, a nested composition approach is proposed. This approach can involve defining additional layers of resource definitions that allow for more complex or multi-step operations that can depend on the state or outputs of previous operations.
 
 ## Assumptions:
-
-    Nested compositions allow for defining complex dependencies and operations that can be reused in different contexts.
-    Each step in solving the Tower of Hanoi can be treated as a sub-problem, potentially allowing for parallel or optimized processing.
-
-    - the nested composition is just a proposal and not implementation, but an idea:
-    Composition
+- Nested compositions allow for defining complex dependencies and operations that can be reused in different contexts.
+- Each step in solving the Tower of Hanoi can be treated as a sub-problem, potentially allowing for parallel or optimized processing.
 
 ### Assumptions and Interpretations
-
-    The system assumes that the input CRD and the number of discs are correctly specified by the user.
-    The moves required for any number of discs are calculated based on the standard recursive solution for the Tower of Hanoi problem.
-    The Kubernetes cluster has sufficient permissions and capabilities to dynamically create and manage ConfigMaps.
+- The system assumes that the input CRD and the number of discs are correctly specified by the user.
+- The moves required for any number of discs are calculated based on the standard recursive solution for the Tower of Hanoi problem.
+- The Kubernetes cluster has sufficient permissions and capabilities to dynamically create and manage ConfigMaps.
 
 ## Custom Function Development
 
 The function, which could be a separate project or container, would be triggered by changes to the TowerChallenge resource. It needs to:
 
-    Read the number of discs from the TowerChallenge object.
-    Implement the Tower of Hanoi algorithm to calculate the move sequence.
-    Generate a series of ConfigMap definitions with move descriptions.
+- Read the number of discs from the TowerChallenge object.
+- Implement the Tower of Hanoi algorithm to calculate the move sequence.
+- Generate a series of ConfigMap definitions with move descriptions.
 
 ## Composition Functions Over a Custom Operator?
 
