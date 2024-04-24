@@ -94,6 +94,7 @@ I have written a custom operator that leverages Crossplane Resources Definitions
 
 ![Config Maps Generated](image-1.png)
 
+
 From this point, I have also had it create a Composition Resource Definition called TowerSamples to record the process of how long it took to produce the ConfigMaps the names of all the configmaps generated, and a clean up of configmaps in the case that the claim defines for the system to reduce the number of discs. I have made sure that it would calculate the number of config maps and generate them only the ones needed and update the messages of disc moved or reduce the ones that would give us a wrong solution.
 
 ```yaml
@@ -206,23 +207,23 @@ spec:
 
 # Challenge 2:
 
-### My Propose Designed
+## My Propose Designed
 
-Composition Hierarchy
+### Composition Hierarchy
 
-    Top-level Composition (TowerChallengeComposition): This composition receives the TowerChallenge claim and breaks it down into sub-compositions. It creates intermediate custom resources, each representing a smaller sub-problem in the Tower of Hanoi challenge.
+- Top-level Composition (TowerChallengeComposition): This composition receives the TowerChallenge claim and breaks it down into sub-compositions. It creates intermediate custom resources, each representing a smaller sub-problem in the Tower of Hanoi challenge.
+- Intermediate Composition (MoveSequenceComposition): Each sub-composition manages a sequence of moves required to shift a certain number of discs from one rod to another. This could involve, for example, moving all but the largest disc to a buffer rod.
+- Base-level Composition (MoveComposition): The base composition represents an individual move of a single disc from one rod to another. It produces a Kubernetes ConfigMap for each move.
 
-    Intermediate Composition (MoveSequenceComposition): Each sub-composition manages a sequence of moves required to shift a certain number of discs from one rod to another. This could involve, for example, moving all but the largest disc to a buffer rod.
 
-    Base-level Composition (MoveComposition): The base composition represents an individual move of a single disc from one rod to another. It produces a Kubernetes ConfigMap for each move.
-
-Workflow
-
-    A user creates a TowerChallenge resource with a specified number of discs.
-    The top-level TowerChallengeComposition observes this resource and decomposes it into a series of MoveSequence resources, each representing part of the solution.
-    Intermediate MoveSequenceCompositions pick up the MoveSequence resources and further break them down into individual Move resources that represent a single disc's move.
-    The base-level MoveComposition reacts to each Move resource by creating the corresponding ConfigMap with the details of the move.
+## Workflow
+- A user creates a TowerChallenge resource with a specified number of discs.
+- The top-level TowerChallengeComposition observes this resource and decomposes it into a series of MoveSequence resources, each representing part of the solution.
+- Intermediate MoveSequenceCompositions pick up the MoveSequence resources and further break them down into individual Move resources that represent a single disc's move.
+- The base-level MoveComposition reacts to each Move resource by creating the corresponding ConfigMap with the details of the move.
 
 ## Additional Notes:
 
-- This challenge was complicated but I found myself enjoying such new technology, I'm so curious as to where the best documentation is written because I reviewed quite literally everything I could grab my hands on. When I first gave my proposed solution containing a custom operator that I built, I recieved an email about using the composition function, and I spent the next couple of days trying to find a way to implement this solution, but finally in all of my studies of crossplane so far I'm left with an understanding that although composition functions are incredibly powerful and allow us to make a level of dynamicness before, it's not ideal for complicated calculations like the Puzzle presented here, and would scale was give us a lot of overhead and complexity comparatively. I feel strong about defending my solution and even stronger about learning how I could best implement composition functions at Swisscom.
+- This challenge was complicated but I found myself enjoying such new technology,
+- I'm so curious as to where the best documentation is written because I reviewed quite literally everything I could grab my hands on. When I first gave my proposed solution containing a custom operator that I built, I recieved an email about using the composition function, and I spent the next couple of days trying to find a way to implement this solution, but finally in all of my studies of crossplane so far I'm left with an understanding that although composition functions are incredibly powerful and allow us to make a level of dynamicness before, it's not ideal for complicated calculations like the Puzzle presented here, and would scale was give us a lot of overhead and complexity comparatively.
+-  I feel strong about defending my solution and even stronger about learning how I could best implement composition functions at Swisscom.
