@@ -95,6 +95,8 @@ I have written a custom operator that leverages Crossplane Resources Definitions
 ![Config Maps Generated](image-1.png)
 ![ConfigMap Detailed](image-2.png)
 
+### TowerSamples: 
+
 From this point, I have also had it create a Composition Resource Definition called TowerSamples to record the process of how long it took to produce the ConfigMaps the names of all the configmaps generated, and a clean up of configmaps in the case that the claim defines for the system to reduce the number of discs. I have made sure that it would calculate the number of config maps and generate them only the ones needed and update the messages of disc moved or reduce the ones that would give us a wrong solution.
 
 ```yaml
