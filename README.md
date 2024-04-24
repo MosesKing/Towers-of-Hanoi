@@ -50,13 +50,13 @@ For the second challenge, a nested composition approach is proposed. This approa
     The moves required for any number of discs are calculated based on the standard recursive solution for the Tower of Hanoi problem.
     The Kubernetes cluster has sufficient permissions and capabilities to dynamically create and manage ConfigMaps.
 
-# Why Use Composition Over a Custom Operator?
+## Composition Functions Over a Custom Operator?
 
-Using Crossplane composition functions for this challenge leverages the existing Kubernetes API and Crossplane capabilities to handle resource lifecycle, state management, and other complex orchestration needs without developing a separate operator. Here's why this might not be ideal compared to a custom operator:
+Using Crossplane composition functions for this challenge leverages the existing Kubernetes API and Crossplane and other complex orchestration needs without developing a separate operator. However, this approach isn't the most ideal. Here's Why :
 
-    Complexity for Simple Tasks: For straightforward tasks like generating a sequence of moves, using Crossplane and writing custom functions might introduce unnecessary complexity compared to a custom operator tailored specifically for this task.
-    Performance Overhead: Running a composition function involves more overhead than executing an operator directly within the cluster, as it may involve additional layers of communication and processing.
-    Limited Flexibility: While Crossplane compositions are powerful, they are somewhat limited to the structures and behaviors defined by Crossplane, whereas a custom operator can be highly tailored to specific needs and optimizations.
+    - Complexity for Simple Tasks: For straightforward tasks like generating a sequence of moves, using Crossplane and writing custom functions might introduce unnecessary complexity compared to a custom operator tailored specifically for this task.
+    - Performance Overhead: Running a composition function involves more overhead than executing an operator directly within the cluster, as it may involve additional layers of communication and processing.
+    - sLimited Flexibility: While Crossplane compositions are powerful, they are somewhat limited to the structures and behaviors defined by Crossplane, whereas a custom operator can be highly tailored to specific needs and optimizations.
 
 This setup in Crossplane uses its strengths in declarative configuration and maintaining state but might be over-engineering for problems that can be solved more efficiently with a custom Kubernetes operator.
 
