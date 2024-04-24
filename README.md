@@ -92,7 +92,7 @@ kubectl apply -f composition.yaml
 
 I have written a custom operator that leverages Crossplane Resources Definitions and Compositions and Composition Resources and Claims to generate config maps after calculating the number of moves to solve the Hanoi Tower puzzle problem. For every disc moved it generates a config maps like the ones in the image below on my local cluster.
 
-![Config Maps Generated](image.png)
+![Config Maps Generated](image-1.png)
 
 From this point, I have also had it create a Composition Resource Definition called TowerSamples to record the process of how long it took to produce the ConfigMaps the names of all the configmaps generated, and a clean up of configmaps in the case that the claim defines for the system to reduce the number of discs. I have made sure that it would calculate the number of config maps and generate them only the ones needed and update the messages of disc moved or reduce the ones that would give us a wrong solution.
 
