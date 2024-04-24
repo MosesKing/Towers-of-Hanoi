@@ -1,91 +1,103 @@
-# Towers-of-Hanoi Kubernetes Integration Documentation
+# Tower of Hanoi Challenge Project
 
-This document provides a comprehensive guide on setting up and deploying a Towers of Hanoi challenge within a Kubernetes environment, leveraging the Crossplane control plane to manage custom resources and compositions.
+## Prerequisites
 
-## Overview
+1. Kubernetes Cluster - A cluster where Crossplane and the custom operator will be deployed.
+2. Install Crossplane - Install Crossplane on your Kubernetes cluster.
+3. Kubebuilder - tool to scaffold out the operator.
 
-The project involves deploying a Kubernetes-based solution for managing the "Tower of Hanoi" puzzle. It includes creating a custom Kubernetes controller, defining the necessary Custom Resource Definitions (CRDs), and configuring Crossplane compositions to facilitate the orchestration and operational management of puzzle instances.
+## Cluster Creation & Setup
 
-## Step 1: Setting Up a Kubernetes Cluster
-
-### Initial Setup
-
-For development and testing, a local Kubernetes cluster is set up using Minikube. This involves installing virtualization tools and Minikube itself.
-
-1. **Virtualization Environment Setup**:
-
-   - Verify and set up a virtualization tool like VirtualBox.
-
-2. **Minikube Installation**:
-   - Follow the installation guide on the [Minikube GitHub page](https://github.com/kubernetes/minikube).
-
-### Start and Verify the Minikube Cluster
-
-- Start Minikube with Docker as the driver and verify that the cluster is operational by checking the status of the nodes.
+1. Create our Kubernetes Cluster
 
 ```bash
-minikube start --driver=docker
-kubectl get nodes
+kind create cluster --name <desiredclustername>
 ```
 
-## Step 2: Install and Set Up Crossplane
-
-### Crossplane Installation
-
-Install Crossplane using Helm by adding the stable repository, updating it, and then deploying Crossplane into the Kubernetes cluster.
+2. Install Crossplane
 
 ```bash
+kubectl create namespace crossplane-system
 helm repo add crossplane-stable https://charts.crossplane.io/stable
 helm repo update
-helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
+helm install crossplane --namespace crossplane-system crossplane-stable/crossplane
 ```
-
-### Verify Crossplane Installation
-
-Ensure that all Crossplane components are running correctly in the `crossplane-system` namespace.
+- For the sake of this project my cluster was locally on my machine however, if we wanted to we could configure crossplane with various cloud providers, AWS, GCP, Azure. T
+3. Install Kubebuilder
 
 ```bash
-kubectl get all -n crossplane-system
+curl -L -o kubebuilder "https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)"\nchmod +x kubebuilder && sudo mv kubebuilder /usr/local/bin/
 ```
 
-## Step 3: Implement Tower of Hanoi Logic with CRDs and Controller
+## Scaffold Our Project
 
-### Custom Resource Definition (CRD)
-
-- The `TowerChallenge` CRD is introduced to manage the lifecycle of the Tower of Hanoi challenges within the cluster.
-
-### Apply the CRD
-
-Deploy the CRD to the Kubernetes cluster:
+Let's get started on building project directory and get all of the files in the correct order, for this we will setup a new directory, and from inside the directory we will execute the kubebuilder commands
 
 ```bash
-kubectl apply -f towerchallenge.yaml
+mkdir tower-operator
+cd tower-operator
+kubebuilder init --domain hanoi.com --repo hanoi.com/tower-operator
 ```
 
-## Step 4: Controller Implementation
-
-### TowerChallengeReconciler
-
-This custom Kubernetes controller orchestrates the resolution of the Tower of Hanoi puzzle. It handles resource lifecycle management, including the creation, update, and cleanup of associated ConfigMaps.
-
-### Key Features
-
-- **Reconciliation Logic**: Manages the initialization, move calculation, and cleanup of resources.
-- **Validation**: Ensures valid puzzle configurations.
-- **ConfigMap Management**: Updates and creates ConfigMaps as needed.
-
-## Step 5: Crossplane Composition Setup
-
-### Composition Definition
-
-Defines how the `CompositeResourceTowerChallenge` is composed of underlying resources, specifically focusing on managing puzzle instances and associated logging configurations.
-
-### Deployment and Configuration
-
-Deploy and configure the composition to link challenge instances with their logging mechanisms, ensuring comprehensive management and observability.
+### Define our CRD
 
 ```bash
-kubectl apply -f composition.yaml
+kubebuilder create api --group webapp --version v1alpha1 --kind TowerChallenge
+```
+
+- Please select `y` to both questions. Thank you !
+
+This above command generates a CRD and controller, that we can modify the API spec to include our number of discs. You should see a result that looks something like below:
+
+```go
+// TowerChallengeSpec defines the desired state of TowerChallenge
+type TowerChallengeSpec struct {
+	// Discs is the number of discs in the Tower of Hanoi challenge
+	// +kubebuilder:validation:Minimum=1
+	Discs int `json:"discs"` // This is what we will add, it won't be there from running the command above. :p
+}
+```
+
+The following code in the towerchallenge_types.go file will make our controller compute the Tower of Hanoi solution and create corresponding ConfigMaps for each move.
+
+### Insight
+
+## Apply our CRD:
+
+```bash
+kubectl create ns tower-challenge
+kubectl apply -f config/crd/bases/
+```
+
+
+## Apply our RBAC
+```bash
+kubectl apply -f 
+```
+## Deploy Our Operator onto the Cluster:
+
+Run the next command to deploy and build the operator.
+
+```bash
+make install
+make run
+```
+
+### Output (Terminal):
+
+```bash
+go fmt ./...
+go vet ./...
+go run ./cmd/main.go
+2024-04-24T12:21:14-07:00       INFO    setup   starting manager
+2024-04-24T12:21:14-07:00       INFO    starting server {"kind": "health probe", "addr": "[::]:8081"}
+2024-04-24T12:21:14-07:00       INFO    controller-runtime.metrics      Starting metrics server
+2024-04-24T12:21:14-07:00       INFO    controller-runtime.metrics      Serving metrics server  {"bindAddress": ":8080", "secure": false}
+2024-04-24T12:21:14-07:00       INFO    Starting EventSource    {"controller": "towerchallenge", "controllerGroup": "hanoi.hanoi.com", "controllerKind": "TowerChallenge", "source": "kind source: *v1alpha1.TowerChallenge"}
+2024-04-24T12:21:14-07:00       INFO    Starting EventSource    {"controller": "towerchallenge", "controllerGroup": "hanoi.hanoi.com", "controllerKind": "TowerChallenge", "source": "kind source: *v1.ConfigMap"}
+2024-04-24T12:21:14-07:00       INFO    Starting Controller     {"controller": "towerchallenge", "controllerGroup": "hanoi.hanoi.com", "controllerKind": "TowerChallenge"}
+2024-04-24T12:21:14-07:00       INFO    Starting workers        {"controller": "towerchallenge", "controllerGroup": "hanoi.hanoi.com", "controllerKind": "TowerChallenge", "worker count": 1}
+
 ```
 
 ## Result:
