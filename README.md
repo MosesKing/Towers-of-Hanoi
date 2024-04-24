@@ -1,6 +1,6 @@
 # Towers-of-Hanoi Kubernetes Integration Documentation
 
-This document provides a comprehensive guide on setting up and deploying a Towers of Hanoi challenge within a Kubernetes environment, leveraging the Crossplane control plane to manage custom resources and compositions.
+This document provides a comprehensive guide on my approach to solving the Towers of Hanoi challenge within a Kubernetes environment, leveraging the Crossplane control plane to manage custom resources and compositions.
 
 # Overview
 
