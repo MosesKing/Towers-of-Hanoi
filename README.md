@@ -56,9 +56,9 @@ Using Crossplane composition functions for this challenge leverages the existing
 
 - Complexity for Simple Tasks: For straightforward tasks like generating a sequence of moves, using Crossplane and writing custom functions might introduce unnecessary complexity compared to a custom operator tailored specifically for this task.
 - Performance Overhead: Running a composition function involves more overhead than executing an operator directly within the cluster, as it may involve additional layers of communication and processing.
-- Limited Flexibility: While Crossplane compositions are powerful, they are somewhat limited to the structures and behaviors defined by Crossplane, whereas a custom operator can be highly tailored to specific needs and optimizations.
+- Limited Flexibility: While Crossplane compositions functions are powerful, as they are able to add a level of dynamicness to static nature of these files. they are still somewhat limited to the structures and behaviors defined by Crossplane, whereas a custom operator can be highly tailored to specific needs and optimizations.
 
-This setup in Crossplane uses its strengths in declarative configuration and maintaining state but might be over-engineering for problems that can be solved more efficiently with a custom Kubernetes operator.
+This setup in Crossplane uses its strengths in declarative configuration and maintaining state but might be over-engineering for problems that can be solved more efficiently with a custom Kubernetes operator. I was still able to use Crossplane extensions, but not for the aspect of calculating of Hanoi Tower puzzle.
 
 ## Additional Notes
 
