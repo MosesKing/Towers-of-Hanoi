@@ -50,6 +50,14 @@ For the second challenge, a nested composition approach is proposed. This approa
     The moves required for any number of discs are calculated based on the standard recursive solution for the Tower of Hanoi problem.
     The Kubernetes cluster has sufficient permissions and capabilities to dynamically create and manage ConfigMaps.
 
+## Custom Function Development
+
+The function, which could be a separate project or container, would be triggered by changes to the TowerChallenge resource. It needs to:
+
+    Read the number of discs from the TowerChallenge object.
+    Implement the Tower of Hanoi algorithm to calculate the move sequence.
+    Generate a series of ConfigMap definitions with move descriptions.
+
 ## Composition Functions Over a Custom Operator?
 
 Using Crossplane composition functions for this challenge leverages the existing Kubernetes API and Crossplane and other complex orchestration needs without developing a separate operator. However, this approach isn't the most ideal. Here's Why:
@@ -62,15 +70,6 @@ This setup in Crossplane uses its strengths in declarative configuration and mai
 
 ## Additional Notes
 
-    Consider security implications, especially in terms of resource permissions and access controls within Kubernetes.
-    Consider why would choose using composition functions over an operator.
-    Overall I learned a lot from this excercise and I am now motivated to keep learning Crossplane on my own,
-    I am super interested in an opportunity to discuss how you would implement this to happen as I was not able to find a way to use functions to do this type of task.
-
-## Custom Function Development
-
-The function, which could be a separate project or container, would be triggered by changes to the TowerChallenge resource. It needs to:
-
-    Read the number of discs from the TowerChallenge object.
-    Implement the Tower of Hanoi algorithm to calculate the move sequence.
-    Generate a series of ConfigMap definitions with move descriptions.
+- Consider security implications, especially in terms of resource permissions and access controls within Kubernetes.
+- Consider why would choose using composition functions over an operator.
+- Overall I learned a lot from this excercise and I am now motivated to keep learning Crossplane on my own, I am super interested in an opportunity to discuss how you would implement this to happen as I was not able to find a way to use functions to do this type of task.
