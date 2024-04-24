@@ -221,18 +221,27 @@ spec:
 
 ## My Propose Designed
 
+I'm not sure if this would work, but from what I've learned from consulting documentation and various technical blogs (https://vrelevant.net/crossplane-beyond-the-basics-nested-xrs-and-composition-selectors/). I think we could potentially do something like this. 
+
 ### Composition Hierarchy
 
-- Top-level Composition (TowerChallengeComposition): This composition receives the TowerChallenge claim and breaks it down into sub-compositions. It creates intermediate custom resources, each representing a smaller sub-problem in the Tower of Hanoi challenge.
-- Intermediate Composition (MoveSequenceComposition): Each sub-composition manages a sequence of moves required to shift a certain number of discs from one rod to another. This could involve, for example, moving all but the largest disc to a buffer rod.
-- Base-level Composition (MoveComposition): The base composition represents an individual move of a single disc from one rod to another. It produces a Kubernetes ConfigMap for each move.
+1. Composite Resource Definitions (XRDs) and Initial Setup
 
-## Workflow
+    Tower Challenge XR (Top-level XR): Define an XRD for the top-level game state. This XR will manage the entire game, including tracking the number of discs and the state of each rod (A, B, C). It will also hold metadata about the current number of moves and the minimum moves calculated based on the number of discs.
 
-- A user creates a TowerChallenge resource with a specified number of discs.
-- The top-level TowerChallengeComposition observes this resource and decomposes it into a series of MoveSequence resources, each representing part of the solution.
-- Intermediate MoveSequenceCompositions pick up the MoveSequence resources and further break them down into individual Move resources that represent a single disc's move.
-- The base-level MoveComposition reacts to each Move resource by creating the corresponding ConfigMap with the details of the move.
+    Move Disc XR (Nested XR): Each move in the game can be represented as a nested XR. These XRs will manage individual moves and will be instantiated by the game state XR whenever a move needs to be computed.
+
+2. Composition Design for Nested Resources
+
+    Main Game Composition: The main composition attached to the game state XR will orchestrate the overall game setup and initiate the first move. This composition includes logic to calculate the minimum number of moves and set up the initial configuration of the discs across the rods.
+
+    Move Composition: A separate composition for the move XR will manage the logic to determine the source and destination rods for each disc movement. This composition will read the current state from the game state XR and decide the next move based on the Tower of Hanoi algorithm. After each move, this composition will update the game state XR with the new configuration.
+
+3. Using Composition Selectors
+
+    Dynamic Strategy Adaptation: Employ composition selectors within the game state XR to dynamically choose different move compositions based on the current state or specific rules (e.g., solving the puzzle with the least number of moves possible or using different strategies like recursive vs iterative approaches).
+
+    Selector Based on Game Progress: Use selectors to switch compositions when the game reaches specific thresholds or conditions, such as when only a few moves are left or if a different strategic approach becomes necessary due to errors or specific game conditions.
 
 ## Additional Notes:
 
