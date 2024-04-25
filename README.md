@@ -1,56 +1,38 @@
-# Towers-of-Hanoi Kubernetes Integration Documentation
+# Tower of Hanoi Challenge Project
 
-This document provides a comprehensive guide on setting up and deploying a Towers of Hanoi challenge within a Kubernetes environment, leveraging the Crossplane control plane to manage custom resources and compositions.
+## Prerequisites
 
-## Overview
-The project involves deploying a Kubernetes-based solution for managing the "Tower of Hanoi" puzzle. It includes creating a custom Kubernetes controller, defining the necessary Custom Resource Definitions (CRDs), and configuring Crossplane compositions to facilitate the orchestration and operational management of puzzle instances.
+1. Kubernetes Cluster - A cluster where Crossplane and the custom operator will be deployed.
+2. Install Crossplane - Install Crossplane on your Kubernetes cluster.
+3. Kubebuilder - tool to scaffold out the operator.
 
-## Step 1: Setting Up a Kubernetes Cluster
-### Initial Setup
-For development and testing, a local Kubernetes cluster is set up using Minikube. This involves installing virtualization tools and Minikube itself.
+## Cluster Creation & Setup
 
-1. **Virtualization Environment Setup**:
-   - Verify and set up a virtualization tool like VirtualBox.
-  
-2. **Minikube Installation**:
-   - Follow the installation guide on the [Minikube GitHub page](https://github.com/kubernetes/minikube).
-
-### Start and Verify the Minikube Cluster
-- Start Minikube with Docker as the driver and verify that the cluster is operational by checking the status of the nodes.
+1. Create our Kubernetes Cluster
 
 ```bash
-minikube start --driver=docker
-kubectl get nodes
+kind create cluster --name <desiredclustername>
 ```
 
-## Step 2: Install and Set Up Crossplane
-### Crossplane Installation
-Install Crossplane using Helm by adding the stable repository, updating it, and then deploying Crossplane into the Kubernetes cluster.
+2. Install Crossplane
 
 ```bash
+kubectl create namespace crossplane-system
 helm repo add crossplane-stable https://charts.crossplane.io/stable
 helm repo update
-helm install crossplane crossplane-stable/crossplane --namespace crossplane-system --create-namespace
+helm install crossplane --namespace crossplane-system crossplane-stable/crossplane
 ```
+- For the sake of this project my cluster was locally on my machine however, if we wanted to we could configure crossplane with various cloud providers, AWS, GCP, Azure. T
 
-### Verify Crossplane Installation
-Ensure that all Crossplane components are running correctly in the `crossplane-system` namespace.
 
-```bash
-kubectl get all -n crossplane-system
+```go
+// TowerChallengeSpec defines the desired state of TowerChallenge
+type TowerChallengeSpec struct {
+	// Discs is the number of discs in the Tower of Hanoi challenge
+	// +kubebuilder:validation:Minimum=1
+	Discs int `json:"discs"` // This is what we will add, it won't be there from running the command above. :p
+}
 ```
-
-## Step 3: Implement Tower of Hanoi Logic with CRDs and Controller
-### Custom Resource Definition (CRD)
-- The `TowerChallenge` CRD is introduced to manage the lifecycle of the Tower of Hanoi challenges within the cluster.
-
-### Apply the CRD
-Deploy the CRD to the Kubernetes cluster:
-
-```bash
-kubectl apply -f towerchallenge.yaml
-```
-
 ## Step 4: Controller Implementation
 ### TowerChallengeReconciler
 This custom Kubernetes controller orchestrates the resolution of the Tower of Hanoi puzzle. It handles resource lifecycle management, including the creation, update, and cleanup of associated ConfigMaps.
