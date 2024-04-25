@@ -210,6 +210,8 @@ status:
 spec:
   discs: 4
 ```
+## Image Packaged: 
+ moefromthemo/tower-challenge-operator:v1.3 - using DockerHub 
 
 # Why Did I Use a Custom Operator over Composition Functions:
 
