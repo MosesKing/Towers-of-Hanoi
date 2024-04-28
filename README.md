@@ -1,22 +1,34 @@
-# Towers-of-Hanoi Kubernetes Integration Documentation
+# Tower of Hanoi Challenge Project
 
-This document provides a comprehensive guide on my approach to solving the Towers of Hanoi challenge within a Kubernetes environment, leveraging the Crossplane control plane to manage custom resources and compositions.
+## Prerequisites
 
-# Overview
+1. Kubernetes Cluster - A cluster where Crossplane and the custom operator will be deployed.
+2. Install Crossplane - Install Crossplane on your Kubernetes cluster.
+3. Kubebuilder - tool to scaffold out the operator.
 
-This README outlines a solution for the Tower of Hanoi problem using Crossplane within a Kubernetes environment. The solution leverages Crossplane's powerful infrastructure-as-code capabilities to dynamically manage Kubernetes resources.
+## Cluster Creation & Setup
 
-Challenge One: 
-Initial Approach
+1. Create our Kubernetes Cluster
 
-The initial challenge involves creating a Crossplane custom resource definition (CRD) that takes an integer discs as input and produces a series of Kubernetes ConfigMaps. Each ConfigMap represents a move necessary to solve the Tower of Hanoi puzzle for the specified number of discs across three rods (A, B, C).
+```bash
+kind create cluster --name <desiredclustername>
+```
 
-## Key Components:
+2. Install Crossplane
 
-    CRD (TowerChallenge): Defines the structure for the input.
-    Composition: Uses a custom function to interpret the TowerChallenge and generate the required ConfigMaps.
-    XR Yaml - Our Claim
-    Tower of Hanoi - Our Function and Package
+```bash
+kubectl create namespace crossplane-system
+helm repo add crossplane-stable https://charts.crossplane.io/stable
+helm repo update
+helm install crossplane --namespace crossplane-system crossplane-stable/crossplane
+```
+- For the sake of this project my cluster was locally on my machine however, if we wanted to we could configure crossplane with various cloud providers, AWS, GCP, Azure. T
+3. Install Kubebuilder
+
+```bash
+curl -L -o kubebuilder "https://go.kubebuilder.io/dl/latest/$(go env GOOS)/$(go env GOARCH)"\nchmod +x kubebuilder && sudo mv kubebuilder /usr/local/bin/
+```
+
 
 ### Example Resource:
 
