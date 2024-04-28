@@ -4,7 +4,7 @@
 
 1. Kubernetes Cluster - A cluster where Crossplane and the custom operator will be deployed.
 2. Install Crossplane - Install Crossplane on your Kubernetes cluster.
-3. Kubebuilder - tool to scaffold out the operator.
+3. Go Function Docker - moe12358/hanoi-function:latest 
 
 ## Cluster Creation & Setup
 
