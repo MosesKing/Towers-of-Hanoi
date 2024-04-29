@@ -1,0 +1,33 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: towerchallenges.hanoi.com
+spec:
+  group: hanoi.com
+  names:
+    kind: TowerChallenge
+    listKind: TowerChallengeList
+    plural: towerchallenges
+    singular: towerchallenge
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              discs:
+                type: integer
+                description: "Number of discs in the Tower of Hanoi challenge."
+          status:
+            type: object
+            properties:
+              moves:
+                type: array
+                items:
+                  type: string

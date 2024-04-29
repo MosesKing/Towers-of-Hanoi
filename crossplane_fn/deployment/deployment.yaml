@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hanoi-function-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hanoi-function
+  template:
+    metadata:
+      labels:
+        app: hanoi-function
+    spec:
+      containers:
+      - name: hanoi-function
+        image: moe12358/hanoi-function:latest
+        ports:
+        - containerPort: 8080

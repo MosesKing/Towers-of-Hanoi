@@ -1,0 +1,31 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: tower-hanoi-composition
+spec:
+  compositeTypeRef:
+    apiVersion: hanoi.com/v1alpha1
+    kind: TowerChallenge
+  resources:
+  - name: moves-configmap
+    base:
+      apiVersion: kubernetes.crossplane.io/v1alpha1
+      kind: Object
+      metadata:
+        name: hanoi-moves-{{ .metadata.uid }}
+      spec:
+        forProvider:
+          manifest:
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: hanoi-moves-{{ .metadata.uid }}
+              labels:
+                example: "true"
+        providerConfigRef:
+          name: kubernetes-provider
+    patches:
+    - fromFieldPath: "spec.discs"
+      toFieldPath: "spec.forProvider.manifest.data.discs"
+    - fromFieldPath: "metadata.uid"
+      toFieldPath: "spec.forProvider.manifest.metadata.name"
